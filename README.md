@@ -7,10 +7,16 @@ Today, I am going to start my grand tour in deep learning. Review what I have le
 2. NLP: 
 
 ## Model:
-* CNN 
-* RNN (LSTM),attention
-* GAN: DCGAN, AttnGan, CycleGAN
-* Deep RL: value based, policy gradient, actor critic, ...
+1. CNN 
+  * VGG16
+  * PixelCNN
+  * Yolo
+2. RNN (LSTM),attention
+3. GAN: 
+  * DCGAN
+  * AttnGan
+  * CycleGAN
+4. Deep RL: value based, policy gradient, actor critic, ...
 
 ## Read papers:
 
