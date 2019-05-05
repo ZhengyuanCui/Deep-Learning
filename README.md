@@ -27,5 +27,8 @@ Today, I am going to start my grand tour in deep learning. Review what I have le
 ## Read papers:
 
 ## Do my own research:
-### Optimization methods
-### How each layer works
+### visual and language intergration (express them in numbers with same sequence of number expressing same meaning)
+### Device a common network to process those information (self decide how many parameter to include in the model)
+### Small points 
+1. Optimization methods
+2. Stableize methods
