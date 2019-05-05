@@ -10,4 +10,4 @@ import math
 from collections import OrderedDict
 from torch.autograd import Variable
 
-#what should GAN have:
+#what should GAN have: 
