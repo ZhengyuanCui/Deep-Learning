@@ -13,3 +13,6 @@ from torch.autograd import Variable
 #what should GAN have: generator: fake image maker and discriminator: real and generated image
 # fake image generate: input: random bits, network: upsample cnn network,
 # discriminators: cnn nets with 1 output
+
+def generator():
+    
