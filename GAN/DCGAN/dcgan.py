@@ -116,7 +116,7 @@ def discriminator(batch_size):
     )
 
 
-def generator():
+def generator(noise_dim):
     """
     Build and return a PyTorch model implementing the DCGAN generator using
     the architecture described below:
@@ -193,7 +193,8 @@ def bce_loss(input, target):
     bce = (input.clamp(min=0) - input * target + (1 +  (-input.abs()).exp()).log()).mean()
     return bce
 
-
+def run_gan(D,G,):
+    for
 
 def main():
     #get data
