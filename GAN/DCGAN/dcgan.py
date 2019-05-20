@@ -40,6 +40,22 @@ def show_images(images):
         plt.imshow(img.reshape([sqrtimg,sqrtimg]))
     return
 
+class ChunkSampler(sampler.Sampler):
+    """Samples elements sequentially from some offset.
+    Arguments:
+        num_samples: # of desired datapoints
+        start: offset where we should start selecting from
+    """
+    def __init__(self, num_samples, start=0):
+        self.num_samples = num_samples
+        self.start = start
+
+    def __iter__(self):
+        return iter(range(self.start, self.start + self.num_samples))
+
+    def __len__(self):
+        return self.num_samples
+
 class Flatten(nn.Module):
     def forward(self, x):
         N, C, H, W = x.size() # read in N, C, H, W
@@ -116,7 +132,7 @@ def discriminator(batch_size):
     )
 
 
-def generator(noise_dim):
+def generator(batch_size, noise_dim):
     """
     Build and return a PyTorch model implementing the DCGAN generator using
     the architecture described below:
@@ -193,13 +209,83 @@ def bce_loss(input, target):
     bce = (input.clamp(min=0) - input * target + (1 +  (-input.abs()).exp()).log()).mean()
     return bce
 
-def run_gan(D,G,):
-    for
+def discriminator_loss(logits_fake, logits_real, dtype):
+    true_label = torch.ones_like(logits_real).type(dtype)
+    fake_label = torch.zeros_like(logits_fake).type(dtype)
+    real_loss = bce_loss(logits_real, true_label)
+    fake_loss = bce_loss(logits_fake, fake_label)
+    return real_loss + fake_loss
+
+def generator_loss(logits_fake, dtype):
+    return bce_loss(logits_fake, torch.zeros_like(logits_fake)).type(dtype)
+
+def run_gan(D, G, D_optim, G_optim, train_loader, dtype, show_every=250, batch_size=128, noise_dim = 96, num_epochs = 10):
+    iter_count = 0
+    for epoch in range(num_epochs):
+        for x,_ in train_loader:
+            if len(x) != batch_size:
+                continue
+            D_optim.zero_grad()
+            real_data = Variable(x).type(dtype)
+            real_logists = D(real_data).type(dtype)
+            fake_images = G(Variable(sample_noise(batch_size, noise_dim).type(dtype))).type(dtype)
+            fake_logits = D(fake_images.view(batch_size,1,28,28)).type(dtype)
+
+            D_loss = discriminator_loss(real_logists, fake_logits, dtype)
+            D_loss.backward()
+            D_optim.step()
+
+            G_optim.zero_grad()
+            g_fake_seed = Variable(sample_noise(batch_size, noise_dim)).type(dtype)
+            fake_images = G(g_fake_seed)
+
+            fake_logits = D(fake_images.view(batch_size, 1, 28, 28))
+            G_loss = generator_loss(fake_logits, dtype)
+            G_loss.backward()
+            G_optim.step()
+
+            if (iter_count % show_every == 0):
+                print('Iter: {}, D: {:.4}, G:{:.4}'.format(
+                    iter_count,D_loss.data,G_loss.data))
+                imgs_numpy = fake_images.data.cpu().numpy()
+                show_images(imgs_numpy[0:16])
+                plt.pause(1.0)
+                print()
+            iter_count += 1
 
 def main():
     #get data
     #train the network
     #test it
+
+    NUM_TRAIN = 50000
+    NUM_VAL = 5000
+
+    NOISE_DIM = 96
+    batch_size = 128
+
+    mnist_train = dset.MNIST('./data', train=True, download=True,
+                               transform=T.ToTensor())
+    loader_train = DataLoader(mnist_train, batch_size=batch_size,
+                              sampler=ChunkSampler(NUM_TRAIN, 0))
+
+    mnist_val = dset.MNIST('./data', train=True, download=True,
+                               transform=T.ToTensor())
+    loader_val = DataLoader(mnist_val, batch_size=batch_size,
+                            sampler=ChunkSampler(NUM_VAL, NUM_TRAIN))
+
+#    dtype = torch.FloatTensor
+    dtype = torch.cuda.FloatTensor ## UNCOMMENT THIS LINE IF YOU'RE ON A GPU!
+
+    D_DC = discriminator(batch_size).type(dtype)
+    D_DC.apply(initialize_weights)
+    G_DC = generator(batch_size, NOISE_DIM).type(dtype)
+    G_DC.apply(initialize_weights)
+
+    D_DC_solver = get_optimizer(D_DC)
+    G_DC_solver = get_optimizer(G_DC)
+
+    run_gan(D_DC, G_DC, D_DC_solver, G_DC_solver, loader_train, dtype, num_epochs=5)
 
 if __name__ == "__main__":
     main()

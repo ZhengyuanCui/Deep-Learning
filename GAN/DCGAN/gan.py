@@ -347,8 +347,8 @@ def main():
         batch_size, 784).numpy().squeeze()
     show_images(imgs)
 
-    dtype = torch.FloatTensor
-#    dtype = torch.cuda.FloatTensor ## UNCOMMENT THIS LINE IF YOU'RE ON A GPU!
+#    dtype = torch.FloatTensor
+    dtype = torch.cuda.FloatTensor ## UNCOMMENT THIS LINE IF YOU'RE ON A GPU!
 
     D_DC = build_discriminator(batch_size).type(dtype)
     D_DC.apply(initialize_weights)
