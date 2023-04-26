@@ -22,6 +22,8 @@ Today, I am going to start my grand tour in deep learning. Review what I have le
 1. DCGAN
 2. AttnGan
 3. CycleGAN
+### Transformers:
+1. Implement from scratch [Done]
 ### Deep RL: value based, policy gradient, actor critic, ...
 
 ## Read papers:
