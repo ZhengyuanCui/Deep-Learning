@@ -22,8 +22,21 @@ Today, I am going to start my grand tour in deep learning. Review what I have le
 3. CycleGAN
 ### Transformers:
 1. Implement from scratch [Done]
+2. Other transformers
+### Diffusion models
+1. Stable diffusion
+## Tasks:
+1. Classification
+2. Object detection
+a) YOLO
+b) R-CNN
+c) SSD
+4. Segmentation
+a) Masked R-CNN
+b) DETR
+c) Segment Anything
 ### Deep RL: value based, policy gradient, actor critic, ...
-
+1. DQN [Done]
 ## Read papers:
 
 ## Research directions:
